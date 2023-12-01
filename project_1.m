@@ -1,4 +1,4 @@
-display('K x T')
+display('jubaking')
 
 
 function [message, symbols] = get_string (file_path)
