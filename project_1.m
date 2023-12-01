@@ -1,12 +1,40 @@
-display('tayel')
+clear;clc;
+filepath = 'trial.txt';
+[text, symbol] = get_symbols(filepath);
 
+function [text, symbol] = get_symbols(file_path)
+%% Firstly:  we initialize a struct to have two fields.
+% one for name of every unique char, and the other for the number of occurrence
+	symbol = struct('name',{}, 'freq',{});
+    
+%% Secondly: we open the text file and import the data into an array
+% the format spec will be of type char; to have an array of characters
+% that fulfill our requirement to scan each character
 
-function [message, symbols] = get_string (file_path)
-    % inputs : .txt file path exget_string ( trial.txt )
-    % to do : number of unique symbols, frequncy of each element
-    % outputs : vector of structs -> each element is struct with 2 fields 
-    % name and frequency ex: S1.name = 'a'; S1.freq = 100
-    % outputs : string contains the message for transmition
+    fileID = fopen(file_path,'r');          % open the file to read
+    formatSpec = '%c';                      % define the type of scanning
+    text = fscanf(fileID, formatSpec);      % scan the file
+    fclose(fileID);                         % close the file
+    
+%% Thirdly: we loop along each element in the array to calculate the frequency
+
+    % for each element in the array
+    for i = 1:numel(text)   
+        % compare between the current char and the chars in the struct
+        char_ID = find(strcmp({symbol.name},text(i))); 
+        % if it's the first time to be seen
+        if isempty(char_ID)
+            % add a new element to the struct and assign it to the new char
+            symbol(end+1).name = text(i);
+            % set the freq to 1, as it's the first time to be seen
+            symbol(end).freq = 1;
+        % if it already exists, char_ID will have its index in the struct
+        else
+            % increment the frequency of this char
+            symbol(char_ID).freq = symbol(char_ID).freq + 1;
+        end
+    end
+    
 end
 
 function [symbols] = get_info (symbols)
