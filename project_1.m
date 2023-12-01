@@ -1,8 +1,19 @@
 clear;clc;
-filepath = 'trial.txt';
+filepath = 'slides-example-for-test.txt';
 [text, symbol] = get_symbols(filepath);
+[symbol,entropy] = get_info(symbol);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [text, symbol] = get_symbols(file_path)
+%{
+  This function is used to generate an array of struct, the struct has two
+  the array has two fields, one for a name and the other for the frequencey.
+  input: file path of the text file
+  output: - the text in form of array of chars, 1 row x no. of chars as columns
+          - an array of structs of each symbol
+%}
 %% Firstly:  we initialize a struct to have two fields.
 % one for name of every unique char, and the other for the number of occurrence
 	symbol = struct('name',{}, 'freq',{});
@@ -37,12 +48,31 @@ function [text, symbol] = get_symbols(file_path)
     
 end
 
-function [symbols] = get_info (symbols)
-    % inputs : vector of structs -> each element is struct with 2 fields 
-    % to do : probabilty, information and entropy.
-    % output : vector of structs -> each element is struct with 5 fields 
-    % name, frequency, P, I, H ex: S1.name = 'a'; S1.freq = 100 ;S1.I = 2
-    %S1.H = 2
+function [symbol,entropy] = get_info(symbol)
+%{
+  This function is used to calculate the probability of each symbol and add
+  an additional field to the struct to hold this probability, also a field
+  for the information of each symbol. Also it calculates the entropy of the
+  whole text.
+  input: array of structs "symbol"
+  output: - symbol with additional two fields - probability & information
+          - the entropy of the whole text.
+%}
+%% Firstly: we initialize the freq and the entropy needed in looping
+    total_freq = 0; % needed to calculate the probability
+    entropy = 0;
+    
+%% Secondly: we calculate the total frequency by summing each symbol freq.    
+    for i = 1:numel(symbol)
+        total_freq = total_freq + symbol(i).freq;
+    end
+
+%% Thirdly: we calculate the probability, information of each symbol & entropy
+    for i = 1:numel(symbol)
+        symbol(i).probab = symbol(i).freq/total_freq;
+        symbol(i).info = -log2(symbol(i).probab);
+        entropy = entropy + symbol(i).probab*symbol(i).info;
+    end
 end
 
 function [huf_codes] = get_Huf_codes (symbols)
