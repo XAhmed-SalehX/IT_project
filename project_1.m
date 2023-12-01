@@ -1,4 +1,4 @@
-display('salo7a')
+display('juba')
 
 
 function [message, symbols] = get_string (file_path)
