@@ -1,6 +1,9 @@
 clear;clc;
-filepath = 'slides-example-for-test.txt';
-[text, symbol] = get_symbols(filepath);
+textfilepath = 'slides-example-for-test.txt';
+encodefilepath = 'encoded.txt';
+decodefilepath = 'decoded.txt';
+
+[text, symbol] = get_symbols(textfilepath);
 [symbol,entropy] = get_info(symbol);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,6 +26,9 @@ function [text, symbol] = get_symbols(file_path)
 % that fulfill our requirement to scan each character
 
     fileID = fopen(file_path,'r');          % open the file to read
+    if fileID == -1
+        error('Could not open the file for reading.');
+    end
     formatSpec = '%c';                      % define the type of scanning
     text = fscanf(fileID, formatSpec);      % scan the file
     fclose(fileID);                         % close the file
@@ -82,13 +88,41 @@ function [huf_codes] = get_Huf_codes (symbols)
     % symbol and code
 end
 
-function [coded_messege] = TX (huf_codes, message)
-    % inputs : vector of structs -> each element is struct with 2 fields 
-    % to do : replace each symbol with code
-    % output : string contains the coded message
+function [encoded_message] = encoding(huff_codes, text, encodefilepath)
+%{
+  This function encodes the text message using the the huffman codes
+  input: - array of structs has two fields one for char, and the other for
+           the code
+         - the path of the encoded text file
+  output: the encoded message
+%}
+%% firstly: Convert text to a cell array of characters
+    textCell = num2cell(text);
+    
+%% Secondly: Loop through each character in the text
+    for i = 1:numel(textCell)
+        % Find the index where the character matches in the 'name' field of the 'symbol' struct
+        char_ID = find(strcmp({symbol.name},textCell(i)));
+        % replace the char with the corresponding code
+        if ~isempty(char_ID)
+            textCell{i} = symbol(char_ID).code;
+        end
+    end
+    
+%% Thirdly: Convert the cell array of characters back to a string
+    encodedText = [textCell{:}];
+    
+%% Fourthly: Write the encoded text into a .txt file 
+    fileID = fopen(encodefilepath,'w');
+    if fileID == -1
+        error('Could not open the file for writing.');
+    end
+    formatSpec = '%s'; 
+    fprintf(fileID,formatSpec,encodedText);
+    fclose(fileID);
 end
 
-function [decoded_messege] = RX (huf_codes, coded_messege)
+function [decoded_messege] = decoding(huf_codes, coded_messege)
     % inputs : string contains the coded message
     % to do : replace each code with symbol
     % output : string contains the decoded message
