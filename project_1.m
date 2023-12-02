@@ -3,6 +3,17 @@ textfilepath = 'slides-example-for-test.txt';
 encodefilepath = 'encoded.txt';
 decodefilepath = 'decoded.txt';
 
+[text, symbol] = get_symbols(textfilepath);
+[symbol,entropy,total_freq] = get_info(symbol);
+
+names = {'a','g','m','t','e','h',' ','i','s'};
+freqs = {1,1,1,1,2,2,3,3,5};
+codes = {'0000','0001','0010','0011','010','011','100','101','11'};
+probabs = {0.0526,0.0526,0.0526,0.0526,0.1053,0.1053,0.1579,0.1579,0.2632};
+symbol = struct('name', names, 'code', codes,'probab',probabs,'freq',freqs);
+[efficiency,avgLength,symbol] = calc_eff(symbol,entropy);
+[comp_ratio] = calc_comb (total_freq,symbol)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
