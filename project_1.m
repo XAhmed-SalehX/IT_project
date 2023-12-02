@@ -226,11 +226,43 @@ function [encoded_message] = encoding(huff_codes, text, encodefilepath)
     fclose(fileID);
 end
 
-function [decoded_messege] = decoding(huf_codes, coded_messege)
-    % inputs : string contains the coded message
-    % to do : replace each code with symbol
-    % output : string contains the decoded message
+function decoded_message = decoding(huffman_dict, encoded_message)
+    %{
+        Decodes an encoded message using a Huffman dictionary.
+
+        Input:
+            - huffman_dict: Array of structs with 'name' and 'code' fields.
+            - encoded_message: The encoded message to be decoded.
+        Output:
+            - decoded_message: The decoded message.
+    %}
+
+    % Initialize an empty string to store the decoded message
+    decoded_message = '';
+    
+    % add new field for length
+    for i = 1:length(huffman_dict)
+        huffman_dict(i).length = length(huffman_dict(i).code);
+    end
+    codes = {huffman_dict.code};
+    start_size = min([huffman_dict.length]);
+    max_size = max([huffman_dict.length]);
+    % Iterate through the encoded message
+    while ~isempty(encoded_message)
+        % Iterate through the Huffman dictionary to find a matching code
+        % search 
+        for i = 0:max_size-start_size
+            if start_size <  length(encoded_message)
+                sample = encoded_message(1:i + start_size);
+                if ismember(sample, codes)
+                    decoded_message = [decoded_message, huffman_dict(ismember(codes, sample)).name];
+                    encoded_message(1:length(sample)) = [];
+                end 
+            end
+        end
+    end
 end
+
 
 function [decoded_messege] = Compare_messege (coded_messege, decoded_messege)
     % inputs : coded_messege and decoded_messege
