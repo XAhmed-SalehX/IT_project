@@ -3,12 +3,10 @@ textfilepath = 'slides-example-for-test.txt';
 encodefilepath = 'encoded.txt';
 decodefilepath = 'decoded.txt';
 
-[text, symbol] = get_symbols(textfilepath);
-[symbol,entropy] = get_info(symbol);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function [text, symbol] = get_symbols(file_path)
 %{
   This function is used to generate an array of struct, the struct has two
@@ -54,7 +52,7 @@ function [text, symbol] = get_symbols(file_path)
     
 end
 
-function [symbol,entropy] = get_info(symbol)
+function [symbol,entropy,total_freq] = get_info(symbol)
 %{
   This function is used to calculate the probability of each symbol and add
   an additional field to the struct to hold this probability, also a field
@@ -63,20 +61,21 @@ function [symbol,entropy] = get_info(symbol)
   input: array of structs "symbol"
   output: - symbol with additional two fields - probability & information
           - the entropy of the whole text.
+          - total frequency needed for compression calculations
 %}
 %% Firstly: we initialize the freq and the entropy needed in looping
-    total_freq = 0; % needed to calculate the probability
+    total_freq = 0;     % needed to calculate the probability
     entropy = 0;
-    
+
 %% Secondly: we calculate the total frequency by summing each symbol freq.    
     for i = 1:numel(symbol)
         total_freq = total_freq + symbol(i).freq;
     end
 
-%% Thirdly: we calculate the probability, information of each symbol & entropy
+%% Thirdly: we calculate the probability, information & length of each symbol & entropy
     for i = 1:numel(symbol)
         symbol(i).probab = symbol(i).freq/total_freq;
-        symbol(i).info = -log2(symbol(i).probab);
+        symbol(i).info = -log2(symbol(i).probab); 
         entropy = entropy + symbol(i).probab*symbol(i).info;
     end
 end
@@ -136,10 +135,49 @@ end
 
 % ======================================================================= %
 
-function [] = calc_eff ()
-    % to do : Calculate the efficiency achieved by the code.
+function [efficiency,avgLength,symbol] = calc_eff(symbol,entropy)
+%{
+  this function calculates the efficiency of the encoding
+  input: symbol with three fields -- name, code and probability of each
+  output: - the efficiency of the encoding
+          - the code average length
+%}
+%% Firstly: we initialize the total length and the average length
+    total_length = 0;   % needed to calculate code average length
+    avgLength = 0;
+    
+%% Secondly: we calculate the length of each code and increment the total length
+for i = 1:numel(symbol)
+   symbol(i).length = strlength(symbol(i).code);
+   total_length = total_length + symbol(i).length;
 end
 
-function [] = calc_comb ()
-    % to do : Calculate the compression ratio of the coded file.
+%% Thirdly: we calculate the code average length
+for i = 1:numel(symbol)
+    avgLength = avgLength + symbol(i).probab * symbol(i).length;
+end
+
+%% Fourthly: we calculate the efficiency
+ efficiency = entropy/avgLength;
+    
+end
+
+function [comp_ratio] = calc_comb (total_freq,symbol)
+%{
+  This function calculates the compression ratio after encoding the text
+  input:  - total number of characters in the text
+          - array of structs of symbols with fields -- length & freq
+  output: - compression ratio done by encoding
+%}
+    
+    % size before = no. of chars * size of one char(8-bits)
+    size_before = total_freq * 8;
+    
+    % size after = code length of a char * frequency
+    size_after = 0;
+    for i = 1:numel(symbol)
+        size_after = size_after + (symbol(i).length * symbol(i).freq);
+    end
+    
+    comp_ratio = size_after/size_before;
 end
