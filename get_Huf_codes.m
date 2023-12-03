@@ -68,44 +68,28 @@ function [huffman_code] = get_Huf_codes (symbols)
     % Traverse the Huffman tree and construct the dictionary
     traverse_tree(huff_tree, '');
     % Function to traverse the Huffman tree and construct the dictionary
-    function traverse_tree(node, current_code)
+    function traverse_tree(symbol, current_code)
         %{
             Recursively traverses the Huffman tree to construct the
             Huffman code dictionary.
 
             Input:
-                - node: Current node in the Huffman tree.
+                - symbol: Current symbol in the Huffman tree.
                 - current_code: The Huffman code built so far.
             Output:
                 - None (updates the global variable 'huffman_code').
         %}
-        if isempty(node.child)  % stop condition (last child)
+        if isempty(symbol.child)  % stop condition (last child)
             % Add the symbol and its code to the dictionary
-            huffman_code(end+1).name = node.name;
+            huffman_code(end+1).name = symbol.name;
             huffman_code(end).code = current_code;
         else  % function in action 
             % Traverse the left child with appended '1' to the current code
-            traverse_tree(node.child{1}, strcat(current_code, '1'));
+            traverse_tree(symbol.child{1}, strcat(current_code, '1'));
             % Traverse the right child with appended '0' to the current code
-            traverse_tree(node.child{2}, strcat(current_code, '0'));
+            traverse_tree(symbol.child{2}, strcat(current_code, '0'));
         end
     end
-    function sortedS = my_sort(s)
-    %{
-        Sorts an array of structs based on the 'probab' field in descending order.
-        Input:
-            - s: Array of structs with a 'probab' field.
-        Output:
-            - sortedS: Array of structs sorted based on 'probab'.
-    %}
-        % Extract symbol probabilities
-        probab = [s.probab];
-        % Sort the intreees based on 'probab' values
-        [~, sorted_Intreees] = sort(probab, 'descend');
-        % Arrange the structs based on sorted intreees
-        sortedS = s(sorted_Intreees);
-    end
-
 
     for i = 1:numel(huffman_code)  % Assuming huffman_code is the array of structs to be updated
         idx = find(strcmp({temp.name}, huffman_code(i).name));  % Find the corresponding name in 'temp'
