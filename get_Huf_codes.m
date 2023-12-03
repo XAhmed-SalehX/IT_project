@@ -1,4 +1,4 @@
-function [huffman_code,huffman_dictionary] = get_Huf_codes (symbols)
+function [huffman_code] = get_Huf_codes (symbols)
     %{
         Generates Huffman codes for a set of symbols.
 

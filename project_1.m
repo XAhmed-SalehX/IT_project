@@ -9,7 +9,7 @@ decodefilepath  = 'decoded.txt';     % decoded text file
 %% Preamble to encoding
 [text, symbol] = get_symbols(textfilepath);             % generate symbols of the text file
 [symbol,entropy,total_freq] = get_info(symbol);         % calculate entropy, probability & information of each symbol
-[huffman_code,huffman_dict] = get_Huf_codes(symbol);    % generate huffman dictionary
+[huffman_code] = get_Huf_codes(symbol);    % generate huffman dictionary
 
 %% Encoding
 encoded_message = encoding(huffman_code, text, encodefilepath);             % encoding the text file using huffman codes
