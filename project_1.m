@@ -1,6 +1,7 @@
 %% Clearing command window & workspace
 clear;clc;
 
+
 %% Define file paths
 textfilepath    = 'trial.txt';       % text file to be encoded
 encodefilepath  = 'encoded.txt';     % encoded text file
