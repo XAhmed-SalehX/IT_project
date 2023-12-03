@@ -9,10 +9,15 @@ decodefilepath = 'decoded.txt';
 
 encoded_message = encoding(huffman_dict, text, encodefilepath);
 decoded_message = decoding(huffman_dict, encoded_message, decodefilepath);
+failed = compare_messege(decoded_message, text);
 
-[efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
-[comp_ratio] = calc_comb (total_freq,symbol);
-disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq,decoded_message)
+if (failed == 0)
+    [efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
+    [comp_ratio] = calc_comb (total_freq,symbol);
+    disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq,decoded_message)
+else
+    disp('There''s error in decoding, Revise your design');
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,12 +298,15 @@ function decoded_message = decoding(huffman_dict, encoded_message, decodefilepat
     fclose(fileID);
 end
 
-function [decoded_messege] = Compare_messege (coded_messege, decoded_messege)
-    % inputs : coded_messege and decoded_messege
-    % to do : Compare
-    % output : any losses
+function failed = compare_messege(decoded_message, text)
+failed = 0;
+    for i=1:numel(text)
+        match = strcmpi(decoded_message(i),text(i));
+        if (match == false)
+            failed = 1;
+        end
+    end
 end
-
 % ======================================================================= %
 
 function [efficiency,avgLength,symbol] = calc_eff(symbol,entropy)
