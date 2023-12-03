@@ -5,14 +5,10 @@ decodefilepath = 'decoded.txt';
 
 [text, symbol] = get_symbols(textfilepath);
 [symbol,entropy,total_freq] = get_info(symbol);
+[huffman_dict] = get_Huf_codes (symbol);
+[efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
+[comp_ratio] = calc_comb (total_freq,symbol);
 
-names = {'a','g','m','t','e','h',' ','i','s'};
-freqs = {1,1,1,1,2,2,3,3,5};
-codes = {'0000','0001','0010','0011','010','011','100','101','11'};
-probabs = {0.0526,0.0526,0.0526,0.0526,0.1053,0.1053,0.1579,0.1579,0.2632};
-symbol = struct('name', names, 'code', codes,'probab',probabs,'freq',freqs);
-[efficiency,avgLength,symbol] = calc_eff(symbol,entropy);
-[comp_ratio] = calc_comb (total_freq,symbol)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +96,14 @@ function [huffman_dict] = get_Huf_codes (symbols)
         Output:
             - huffman_dict: Array of structs with 'name' and 'code' fields.
     %}
+
+    temp = struct('name',[],'probab',[],'freq',[]);
+    for i = 1:numel(symbols)
+        temp(i).name = symbols(i).name;
+    	temp(i).freq = symbols(i).freq;
+        temp(i).probab = symbols(i).probab;
+    end
+    
     % Use array comprehension to remove freq and info
     symbols = arrayfun(@(x) rmfield(x, 'freq'), symbols);
     symbols = arrayfun(@(x) rmfield(x, 'info'), symbols);
@@ -190,6 +194,16 @@ function [huffman_dict] = get_Huf_codes (symbols)
         sortedS = s(sorted_Intreees);
     end
 
+
+    for i = 1:numel(huffman_dict)  % Assuming huffman_dict is the array of structs to be updated
+        idx = find(strcmp({temp.name}, huffman_dict(i).name));  % Find the corresponding name in 'temp'
+            if ~isempty(idx)
+                huffman_dict(i).freq = temp(idx).freq;          % Copy 'freq' from 'temp' to 'huffman_dict'
+                huffman_dict(i).probab = temp(idx).probab;      % Copy 'probab' from 'temp' to 'huffman_dict'
+            else
+                disp('Letter is lost');
+            end
+    end
 end
 
 function [encoded_message] = encoding(huff_codes, text, encodefilepath)
