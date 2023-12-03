@@ -1,11 +1,12 @@
 clear;clc;
-textfilepath = 'slides-example-for-test.txt';
+textfilepath = 'trial.txt';
 encodefilepath = 'encoded.txt';
 decodefilepath = 'decoded.txt';
 
 [text, symbol] = get_symbols(textfilepath);
 [symbol,entropy,total_freq] = get_info(symbol);
 [huffman_dict] = get_Huf_codes (symbol);
+encoding(huffman_dict, text, encodefilepath);
 [efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
 [comp_ratio] = calc_comb (total_freq,symbol);
 disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq)
@@ -206,7 +207,7 @@ function [huffman_dict] = get_Huf_codes (symbols)
     end
 end
 
-function [encoded_message] = encoding(huff_codes, text, encodefilepath)
+function encoding(symbol, text, encodefilepath)
 %{
   This function encodes the text message using the the huffman codes
   input: - array of structs has two fields one for char, and the other for
