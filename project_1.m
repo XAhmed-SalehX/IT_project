@@ -2,7 +2,7 @@
 clear;clc;
 
 %% Define file paths
-textfilepath    = 'trial.txt';       % text file to be encoded
+textfilepath    = 'slides-example-for-test.txt';       % text file to be encoded
 encodefilepath  = 'encoded.txt';     % encoded text file
 decodefilepath  = 'decoded.txt';     % decoded text file
 
