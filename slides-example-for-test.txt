@@ -1,2 +1,9 @@
-a b	v
-c d
+
+a	a
+
+a	a
+
+a a
+
+a a
+	
