@@ -1,15 +1,19 @@
 clear;clc;
-textfilepath = 'trial.txt';
+textfilepath = 'slides-example-for-test.txt';
 encodefilepath = 'encoded.txt';
 decodefilepath = 'decoded.txt';
 
 [text, symbol] = get_symbols(textfilepath);
 [symbol,entropy,total_freq] = get_info(symbol);
 [huffman_dict] = get_Huf_codes (symbol);
-encoding(huffman_dict, text, encodefilepath);
+
+encoded_message = encoding(huffman_dict, text, encodefilepath);
+decoded_message = decoding(huffman_dict, encoded_message, decodefilepath);
+
 [efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
 [comp_ratio] = calc_comb (total_freq,symbol);
-disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq)
+disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq,decoded_message)
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +211,7 @@ function [huffman_dict] = get_Huf_codes (symbols)
     end
 end
 
-function encoding(symbol, text, encodefilepath)
+function encodedText = encoding(symbol, text, encodefilepath)
 %{
   This function encodes the text message using the the huffman codes
   input: - array of structs has two fields one for char, and the other for
@@ -241,7 +245,7 @@ function encoding(symbol, text, encodefilepath)
     fclose(fileID);
 end
 
-function decoded_message = decoding(huffman_dict, encoded_message)
+function decoded_message = decoding(huffman_dict, encoded_message, decodefilepath)
     %{
         Decodes an encoded message using a Huffman dictionary.
 
@@ -267,17 +271,24 @@ function decoded_message = decoding(huffman_dict, encoded_message)
         % Iterate through the Huffman dictionary to find a matching code
         % search 
         for i = 0:max_size-start_size
-            if start_size <  length(encoded_message)
-                sample = encoded_message(1:i + start_size);
+            if start_size <=  length(encoded_message)
+                sample = encoded_message(1:i + start_size)
                 if ismember(sample, codes)
-                    decoded_message = [decoded_message, huffman_dict(ismember(codes, sample)).name];
-                    encoded_message(1:length(sample)) = [];
+                    decoded_message = [decoded_message, huffman_dict(ismember(codes, sample)).name]
+                    encoded_message(1:length(sample)) = []
                 end 
             end
         end
     end
+    
+    fileID = fopen(decodefilepath,'w');
+    if fileID == -1
+        error('Could not open the file for writing.');
+    end
+    formatSpec = '%s'; 
+    fprintf(fileID,formatSpec,decoded_message);
+    fclose(fileID);
 end
-
 
 function [decoded_messege] = Compare_messege (coded_messege, decoded_messege)
     % inputs : coded_messege and decoded_messege
@@ -334,11 +345,17 @@ function [comp_ratio] = calc_comb (total_freq,symbol)
     comp_ratio = size_after/size_before;
 end
 
-function disp_spec(entropy,avgLength,efficiency,compression,total_freq)
+function disp_spec(entropy,avgLength,efficiency,compression,total_freq,decoded_message)
     fprintf('Encoding is done on %d total characters\n',total_freq);
-    fprintf('You will find the encoded text in the same directory\n\n');
     fprintf('The Entropy of symbols is %0.2f bits\n',entropy);
     fprintf('The Average Code Length is %0.2f bits/symbol\n',avgLength);
     fprintf('The Efficiency of encoding is %0.2f%%\n',efficiency*100);
     fprintf('The Compression Ratio is %0.2f%%\n\n',compression*100);
+    fprintf('You will find the encoded text in the same directory\n');
+    if (length(decoded_message) < 50)
+        fprintf('The Decoded Message is:\n');
+        fprintf('-- %s --\n\n',decoded_message);
+    else
+        fprintf('You will find the decoded text in the same directory\n\n');
+    end
 end
