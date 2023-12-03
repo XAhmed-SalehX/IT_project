@@ -29,6 +29,8 @@ end
     if fileID == -1
         error('Could not open the file for writing.');
     else
+        % sort the symbols based on thier probabilities 
+        symbol = my_sort(symbol);
         myTable = struct2table(symbol);
         writetable(myTable, filename);
     end
