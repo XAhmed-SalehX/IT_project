@@ -8,7 +8,7 @@ decodefilepath = 'decoded.txt';
 [huffman_dict] = get_Huf_codes (symbol);
 [efficiency,avgLength,symbol] = calc_eff(huffman_dict,entropy);
 [comp_ratio] = calc_comb (total_freq,symbol);
-
+disp_spec(entropy,avgLength,efficiency,comp_ratio,total_freq)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,4 +331,13 @@ function [comp_ratio] = calc_comb (total_freq,symbol)
     end
     
     comp_ratio = size_after/size_before;
+end
+
+function disp_spec(entropy,avgLength,efficiency,compression,total_freq)
+    fprintf('Encoding is done on %d total characters\n',total_freq);
+    fprintf('You will find the encoded text in the same directory\n\n');
+    fprintf('The Entropy of symbols is %0.2f bits\n',entropy);
+    fprintf('The Average Code Length is %0.2f bits/symbol\n',avgLength);
+    fprintf('The Efficiency of encoding is %0.2f%%\n',efficiency*100);
+    fprintf('The Compression Ratio is %0.2f%%\n\n',compression*100);
 end
