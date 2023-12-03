@@ -22,5 +22,14 @@ end
 
 %% Fourthly: we calculate the efficiency
  efficiency = entropy/avgLength;
-    
+ 
+%% Lastly: Export the data into an excel sheet
+    filename = 'char_data.csv';
+    fileID = fopen(filename, 'w');
+    if fileID == -1
+        error('Could not open the file for writing.');
+    end
+        myTable = struct2table(symbol);
+        writetable(myTable, filename);
+    fclose(fileID);
 end

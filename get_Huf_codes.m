@@ -11,6 +11,7 @@ function [huffman_dict] = get_Huf_codes (symbols)
     temp = struct('name',[],'probab',[],'freq',[]);
     for i = 1:numel(symbols)
         temp(i).name = symbols(i).name;
+        temp(i).info = symbols(i).info;
     	temp(i).freq = symbols(i).freq;
         temp(i).probab = symbols(i).probab;
     end
@@ -110,6 +111,7 @@ function [huffman_dict] = get_Huf_codes (symbols)
         idx = find(strcmp({temp.name}, huffman_dict(i).name));  % Find the corresponding name in 'temp'
             if ~isempty(idx)
                 huffman_dict(i).freq = temp(idx).freq;          % Copy 'freq' from 'temp' to 'huffman_dict'
+                huffman_dict(i).info = temp(idx).info;          % Copy 'info' from 'temp' to 'huffman_dict'
                 huffman_dict(i).probab = temp(idx).probab;      % Copy 'probab' from 'temp' to 'huffman_dict'
             else
                 disp('Letter is lost');

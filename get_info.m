@@ -24,4 +24,5 @@ function [symbol,entropy,total_freq] = get_info(symbol)
         symbol(i).info = -log2(symbol(i).probab); 
         entropy = entropy + symbol(i).probab*symbol(i).info;
     end
+
 end
