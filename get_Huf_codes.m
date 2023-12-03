@@ -68,26 +68,26 @@ function [huffman_dict] = get_Huf_codes (symbols)
     % Traverse the Huffman tree and construct the dictionary
     traverse_tree(huff_tree, '');
     % Function to traverse the Huffman tree and construct the dictionary
-    function traverse_tree(node, current_code)
+    function traverse_tree(symbol, current_code)
         %{
             Recursively traverses the Huffman tree to construct the
             Huffman code dictionary.
 
             Input:
-                - node: Current node in the Huffman tree.
+                - symbol: Current symbol in the Huffman tree.
                 - current_code: The Huffman code built so far.
             Output:
                 - None (updates the global variable 'huffman_dict').
         %}
-        if isempty(node.child)  % stop condition (last child)
+        if isempty(symbol.child)  % stop condition (last child)
             % Add the symbol and its code to the dictionary
-            huffman_dict(end+1).name = node.name;
+            huffman_dict(end+1).name = symbol.name;
             huffman_dict(end).code = current_code;
         else  % function in action 
             % Traverse the left child with appended '1' to the current code
-            traverse_tree(node.child{1}, strcat(current_code, '1'));
+            traverse_tree(symbol.child{1}, strcat(current_code, '1'));
             % Traverse the right child with appended '0' to the current code
-            traverse_tree(node.child{2}, strcat(current_code, '0'));
+            traverse_tree(symbol.child{2}, strcat(current_code, '0'));
         end
     end
     function sortedS = my_sort(s)
