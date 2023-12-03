@@ -7,6 +7,14 @@ function [huffman_dict] = get_Huf_codes (symbols)
         Output:
             - huffman_dict: Array of structs with 'name' and 'code' fields.
     %}
+
+    temp = struct('name',[],'probab',[],'freq',[]);
+    for i = 1:numel(symbols)
+        temp(i).name = symbols(i).name;
+    	temp(i).freq = symbols(i).freq;
+        temp(i).probab = symbols(i).probab;
+    end
+    
     % Use array comprehension to remove freq and info
     symbols = arrayfun(@(x) rmfield(x, 'freq'), symbols);
     symbols = arrayfun(@(x) rmfield(x, 'info'), symbols);
@@ -97,4 +105,14 @@ function [huffman_dict] = get_Huf_codes (symbols)
         sortedS = s(sorted_Intreees);
     end
 
+
+    for i = 1:numel(huffman_dict)  % Assuming huffman_dict is the array of structs to be updated
+        idx = find(strcmp({temp.name}, huffman_dict(i).name));  % Find the corresponding name in 'temp'
+            if ~isempty(idx)
+                huffman_dict(i).freq = temp(idx).freq;          % Copy 'freq' from 'temp' to 'huffman_dict'
+                huffman_dict(i).probab = temp(idx).probab;      % Copy 'probab' from 'temp' to 'huffman_dict'
+            else
+                disp('Letter is lost');
+            end
+    end
 end
