@@ -1,5 +1,5 @@
 clear;clc;
-textfilepath = 'slides-example-for-test.txt';
+textfilepath = 'trial.txt';
 encodefilepath = 'encoded.txt';
 decodefilepath = 'decoded.txt';
 
@@ -266,19 +266,22 @@ function decoded_message = decoding(huffman_dict, encoded_message, decodefilepat
     codes = {huffman_dict.code};
     start_size = min([huffman_dict.length]);
     max_size = max([huffman_dict.length]);
+    counter = 0;
     % Iterate through the encoded message
     while ~isempty(encoded_message)
         % Iterate through the Huffman dictionary to find a matching code
         % search 
-        for i = 0:max_size-start_size
+        for sample_size = start_size:max_size
             if start_size <=  length(encoded_message)
-                sample = encoded_message(1:i + start_size)
+                sample = encoded_message(1:sample_size);
                 if ismember(sample, codes)
-                    decoded_message = [decoded_message, huffman_dict(ismember(codes, sample)).name]
-                    encoded_message(1:length(sample)) = []
+                    decoded_message = [decoded_message, huffman_dict(ismember(codes, sample)).name];
+                    encoded_message(1:length(sample)) = [];
+                    break
                 end 
             end
         end
+        counter = counter + 1;
     end
     
     fileID = fopen(decodefilepath,'w');
