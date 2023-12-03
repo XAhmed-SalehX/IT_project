@@ -90,22 +90,6 @@ function [huffman_dict] = get_Huf_codes (symbols)
             traverse_tree(symbol.child{2}, strcat(current_code, '0'));
         end
     end
-    function sortedS = my_sort(s)
-    %{
-        Sorts an array of structs based on the 'probab' field in descending order.
-        Input:
-            - s: Array of structs with a 'probab' field.
-        Output:
-            - sortedS: Array of structs sorted based on 'probab'.
-    %}
-        % Extract symbol probabilities
-        probab = [s.probab];
-        % Sort the intreees based on 'probab' values
-        [~, sorted_Intreees] = sort(probab, 'descend');
-        % Arrange the structs based on sorted intreees
-        sortedS = s(sorted_Intreees);
-    end
-
 
     for i = 1:numel(huffman_dict)  % Assuming huffman_dict is the array of structs to be updated
         idx = find(strcmp({temp.name}, huffman_dict(i).name));  % Find the corresponding name in 'temp'
