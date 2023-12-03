@@ -28,8 +28,9 @@ end
     fileID = fopen(filename, 'w');
     if fileID == -1
         error('Could not open the file for writing.');
-    end
+    else
         myTable = struct2table(symbol);
         writetable(myTable, filename);
+    end
     fclose(fileID);
 end
